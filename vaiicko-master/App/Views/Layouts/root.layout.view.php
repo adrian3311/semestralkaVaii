@@ -20,19 +20,30 @@
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="<?= $link->asset('css/styl.css') ?>">
+    <link rel="stylesheet" href="<?= $link->asset('css/images.css') ?>">
     <script src="<?= $link->asset('js/script.js') ?>"></script>
 </head>
 <body>
 <nav class="navbar navbar-expand-sm bg-light">
     <div class="container-fluid">
         <a class="navbar-brand" href="<?= $link->url('home.index') ?>">
-            <img src="<?= $link->asset('images/vaiicko_logo.png') ?>" title="<?= App\Configuration::APP_NAME ?>" alt="Framework Logo">
+            <img id="logo" src='images/logo.png' title="Arch Cafe" alt="Cafe Logo">
         </a>
         <ul class="navbar-nav me-auto">
             <li class="nav-item">
+                <a class="nav-link" href="<?= $link->url('home.information') ?>">About</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="<?= $link->url('home.contact') ?>">Contact</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="<?= $link->url('home.contact') ?>">Menu</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="<?= $link->url('home.contact') ?>">Reviews</a>
+            </li>
         </ul>
+
         <?php if ($user->isLoggedIn()) { ?>
             <span class="navbar-text">Logged in user: <b><?= $user->getName() ?></b></span>
             <ul class="navbar-nav ms-auto">
