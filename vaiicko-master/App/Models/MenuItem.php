@@ -8,9 +8,9 @@ class MenuItem extends Model
 {
 
     protected ?int $id = null;
-    protected ?string $title;
-    protected ?string $text;
-    protected ?string $picture;
+    protected ?string $title = null;
+    protected ?string $text = null;
+    protected ?string $picture = null;
 
 
     public function getId(): ?int

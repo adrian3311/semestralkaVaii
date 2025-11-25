@@ -12,7 +12,7 @@ class User implements IIdentity
     public function __construct(
         public ?int $id = null,
         public string $username = '',
-        public string $name = ''
+        public string $email = ''
     ) {
     }
 
@@ -36,13 +36,19 @@ class User implements IIdentity
         $this->username = $username;
     }
 
-    public function getName(): string
+    public function getEmail(): string
     {
-        return $this->name;
+        return $this->email;
     }
 
-    public function setName(string $name): void
+    public function setEmail(string $email): void
     {
-        $this->name = $name;
+        $this->email = $email;
+    }
+
+
+    public function getName(): string
+    {
+        return $this->username;
     }
 }
