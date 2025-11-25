@@ -37,7 +37,7 @@
                 <a class="nav-link" href="<?= $link->url('home.contact') ?>">Contact</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="<?= $link->url('home.contact') ?>">Menu</a>
+                <a class="nav-link" href="<?= $link->url('menu.index') ?>">Menu</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="<?= $link->url('home.contact') ?>">Reviews</a>
