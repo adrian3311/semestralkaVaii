@@ -9,6 +9,8 @@
 $view->setLayout('root');
 // Ensure $user exists for static analysis and runtime fallback
 if (!isset($user)) { $user = new \Framework\Auth\AppUser(); }
+// determine admin state
+$isAdmin = false; try { $isAdmin = $user->isLoggedIn() && ($user->getUsername() === 'admin'); } catch (\Throwable $e) { $isAdmin = false; }
 
 ?>
 
@@ -19,7 +21,7 @@ if (!isset($user)) { $user = new \Framework\Auth\AppUser(); }
         <div class="alert alert-danger"><?= htmlspecialchars($message) ?></div>
     <?php endif; ?>
 
-    <?php if (!$user->isLoggedIn()): ?>
+    <?php if (!$isAdmin): ?>
         <div class="alert alert-warning">Musíte byť prihlásený ako administrátor, aby ste mohli upraviť položku.</div>
     <?php else: ?>
 

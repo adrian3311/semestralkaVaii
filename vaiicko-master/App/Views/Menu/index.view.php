@@ -7,6 +7,9 @@
 
 // Ensure $user is defined (provided by framework in runtime). This avoids static analysis undefined variable warnings.
 if (!isset($user)) { $user = new \Framework\Auth\AppUser(); }
+// Determine admin state for view controls
+$isAdmin = false;
+try { $isAdmin = $user->isLoggedIn() && ($user->getUsername() === 'admin'); } catch (\Throwable $e) { $isAdmin = false; }
 
 use App\Configuration;
 
@@ -15,7 +18,7 @@ use App\Configuration;
 <div class="container-fluid">
     <div class="row mb-4">
         <div class="col">
-            <?php if ($user->isLoggedIn()): ?>
+            <?php if ($isAdmin): ?>
                 <a href="<?= $link->url('menu.add') ?>" class="btn btn-success">Pridať položku</a>
             <?php endif; ?>
         </div>
@@ -34,8 +37,10 @@ use App\Configuration;
                         <span>Title: <?= $item->getTitle() ?></span>
                         <span class="flex-grow-1"></span>
                         <?php if ($user->isLoggedIn()): ?>
-                            <a class="btn btn-sm btn-outline-primary ms-2" href="<?= $link->url('menu.edit', ['id' => $item->getId()]) ?>">Edit</a>
-                            <a class="btn btn-sm btn-outline-danger ms-2" href="<?= $link->url('menu.delete', ['id' => $item->getId()]) ?>">Delete</a>
+                            <?php if ($isAdmin): ?>
+                                <a class="btn btn-sm btn-outline-primary ms-2" href="<?= $link->url('menu.edit', ['id' => $item->getId()]) ?>">Edit</a>
+                                <a class="btn btn-sm btn-outline-danger ms-2" href="<?= $link->url('menu.delete', ['id' => $item->getId()]) ?>">Delete</a>
+                            <?php endif; ?>
                          <?php endif; ?>
                      </div>
                 </div>

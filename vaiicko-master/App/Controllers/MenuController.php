@@ -15,9 +15,14 @@ class MenuController extends BaseController {
 
     public function authorize(Request $request, string $action): bool
     {
-        // restrict add and edit actions to logged-in users
+        // restrict add, edit, delete actions to admin users only
         if (in_array($action, ['add', 'edit', 'delete'])) {
-            return $this->user->isLoggedIn();
+            // consider admin to be a logged-in user with username 'admin'
+            try {
+                return $this->user->isLoggedIn() && ($this->user->getUsername() === 'admin');
+            } catch (\Throwable $e) {
+                return false;
+            }
         }
         return true;
     }
@@ -184,4 +189,3 @@ class MenuController extends BaseController {
         return $this->html(compact('menu'));
     }
 }
-

@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Configuration;
+use App\Models\User;
 use Exception;
 use Framework\Core\BaseController;
 use Framework\Http\Request;
@@ -53,7 +54,13 @@ class AuthController extends BaseController
             }
         }
 
-        $message = $logged === false ? 'Bad username or password' : null;
+        // Show message if redirected here after registration
+        $message = null;
+        if ($request->value('registered')) {
+            $message = 'Registration successful — please log in.';
+        } else {
+            $message = $logged === false ? 'Bad username or password' : null;
+        }
         return $this->html(compact("message"));
     }
 
@@ -69,5 +76,72 @@ class AuthController extends BaseController
     {
         $this->app->getAuthenticator()->logout();
         return $this->html();
+    }
+
+    /**
+     * Register new user (simple implementation).
+     */
+    public function register(Request $request): Response
+    {
+        $message = null;
+        $old = ['username' => '', 'email' => ''];
+        if ($request->hasValue('submit')) {
+            $username = trim((string)$request->value('username'));
+            $email = trim((string)$request->value('email'));
+            $password = (string)$request->value('password');
+            $passwordConfirm = (string)$request->value('password_confirm');
+
+            // keep entered values for re-display (do NOT include passwords)
+            $old['username'] = $username;
+            $old['email'] = $email;
+
+            // Basic validation
+            if ($username === '' || $email === '' || $password === '') {
+                $message = 'All fields are required.';
+                return $this->html(compact('message', 'old'));
+            }
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $message = 'Invalid email address.';
+                return $this->html(compact('message', 'old'));
+            }
+            if (strlen($password) < 6) {
+                $message = 'Password must be at least 6 characters.';
+                return $this->html(compact('message', 'old'));
+            }
+            if ($password !== $passwordConfirm) {
+                $message = 'Passwords do not match.';
+                return $this->html(compact('message', 'old'));
+            }
+
+            // Check uniqueness
+            try {
+                $exists = User::findByUsernameOrEmail($username) ?? User::findByUsernameOrEmail($email);
+                if ($exists !== null) {
+                    $message = 'Username or email already in use.';
+                    return $this->html(compact('message', 'old'));
+                }
+            } catch (\Throwable $e) {
+                // ignore and allow attempt to create (but warn)
+            }
+
+            // Create user
+            try {
+                $user = new User();
+                $user->setUsername($username);
+                $user->setEmail($email);
+                // Hash password
+                $hash = password_hash($password, PASSWORD_DEFAULT);
+                $user->setPassword($hash);
+                $user->save();
+
+                // Redirect to login with success flag
+                return $this->redirect(Configuration::LOGIN_URL . '&registered=1');
+            } catch (Exception $e) {
+                $message = 'Registration failed: ' . $e->getMessage();
+                return $this->html(compact('message', 'old'));
+            }
+        }
+
+        return $this->html(compact('message', 'old'));
     }
 }
