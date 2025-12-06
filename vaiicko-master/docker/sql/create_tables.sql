@@ -21,7 +21,7 @@ CREATE TABLE `users` (
 -- To generate a hash run:
 --   php -r "echo password_hash('xd', PASSWORD_DEFAULT) . PHP_EOL;"
 -- then copy the generated hash into the INSERT (replace 'xd').
-INSERT INTO `users` (`username`, `password`, `email`) VALUES ('admin', 'xd', 'admin@example.com');
+INSERT INTO `users` (`username`, `password`, `email`) VALUES ('admin', 'adminadmin', 'admin@example.com');
 
 -- Example: insert a user.
 -- IMPORTANT: passwords must be stored as PHP password_hash() values (bcrypt/argon2) for the authenticator
@@ -41,9 +41,9 @@ INSERT INTO `users` (`username`, `password`, `email`) VALUES ('admin', 'xd', 'ad
 -- INSERT INTO `users` (`username`, `password`, `email`) VALUES ('testuser', '<PASTE_HASH_HERE>', 'test@example.com');
 
 -- Create table for menu items used by the application
-DROP TABLE IF EXISTS `menu_items`;
+DROP TABLE IF EXISTS `menuitems`;
 
-CREATE TABLE `menu_items` (
+CREATE TABLE `menuitems` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(255) NOT NULL,
   `text` TEXT DEFAULT NULL,
@@ -54,6 +54,9 @@ CREATE TABLE `menu_items` (
 
 -- Example insert into menu_items
 -- Note: adjust file paths for pictures to match your public/ directory usage (e.g. 'images/filename.jpg')
+INSERT INTO `menuitems` (`title`, `text`, `picture`) VALUES
+  ('Cappuccino', 'Our signature cappuccino made with freshly roasted beans and perfectly frothed milk.', 'images/cappuccino.jpg'),
+  ('Tiramisu', 'Classic Italian tiramisu layered with mascarpone cream and espresso-soaked ladyfingers.', 'images/tiramisu.jpg');
 
 -- Create table for reviews used by the application
 DROP TABLE IF EXISTS `reviews`;

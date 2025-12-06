@@ -20,41 +20,11 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="<?= $link->asset('css/styl.css') ?>">
     <link rel="stylesheet" href="<?= $link->asset('css/images.css') ?>">
+    <link rel="stylesheet" href="<?= $link->asset('css/theme.css') ?>">
+    <link rel="stylesheet" href="<?= $link->asset('css/inlined-styles.css') ?>">
     <script src="<?= $link->asset('js/script.js') ?>"></script>
-    <style>
-        /* Reset page margins to avoid gaps */
-        html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
-        /* Make body a column flex container so footer can be pushed to bottom when content is short */
-        body { display: flex; flex-direction: column; min-height: 100vh; }
-        /* Footer full-width background while keeping content centered inside the inner .container */
-        .site-footer {
-            /* full-bleed: extend background to viewport edges */
-            width: 100vw;
-            margin-left: calc(50% - 50vw);
-            margin-right: calc(50% - 50vw);
-            background: #212529;
-            color: #fff;
-            box-sizing: border-box;
-            left: 0;
-        }
-        /* Make the main content area expand to fill remaining space */
-        .container-fluid.mt-3 { flex: 1 0 auto; }
-        /* Navbar center username styling */
-        .navbar { position: relative; }
-        .navbar-center {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            pointer-events: none; /* don't block clicks on navbar */
-            color: #000;
-            font-weight: 500;
-            white-space: nowrap;
-        }
-        /* on dark navbar variations you might want .navbar-center { color: #fff; } */
-        .site-footer a { color: #f8f9fa; text-decoration: none; }
-    </style>
+    <script src="<?= $link->asset('js/back-to-top.js') ?>"></script>
 </head>
 <body>
 <nav class="navbar navbar-expand-sm bg-light">
@@ -102,8 +72,10 @@
     <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center" style="padding-top:6px;padding-bottom:6px;">
         <div style="font-size:0.95rem;">&copy; <?= date('Y') ?> <?= htmlspecialchars(App\Configuration::APP_NAME) ?> — All rights reserved.</div>
         <div class="mt-2 mt-md-0" style="font-size:0.95rem;">
-            <a href="#" class="me-3">Facebook</a>
-            <a href="#" class="me-3">Instagram</a>
+            <!-- Open external social links in a new tab and use rel for security -->
+            <a href="https://www.facebook.com/p/Arch-Cafe-at-Kresen-Kernow-100091795280068" class="me-3" target="_blank" rel="noopener noreferrer">Facebook</a>
+            <a href="https://www.instagram.com/michal.liba" class="me-3" target="_blank" rel="noopener noreferrer">Instagram</a>
+            <!-- Internal contact link stays on same tab -->
             <a href="<?= $link->url('home.contact') ?>">Contact</a>
         </div>
     </div>

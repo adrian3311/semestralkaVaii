@@ -79,7 +79,44 @@ class AuthController extends BaseController
     }
 
     /**
-     * Register new user (simple implementation).
+     * Register a new user (simple implementation).
+     *
+     * Handles a POST request from the registration form and performs the following steps:
+     * - Reads input fields `username`, `email`, `password`, and `password_confirm` from the Request.
+     * - Performs server-side validation: required fields, valid email format, minimum
+     *   password length, and matching passwords.
+     * - Checks that the username or email is not already registered.
+     * - Creates a new `User` record with the password securely hashed via `password_hash()`.
+     * - On success, redirects the user to the login page with a `registered=1` flag.
+     *
+     * Inputs (from Request):
+     * - username (string) — required, trimmed
+     * - email (string) — required, validated with FILTER_VALIDATE_EMAIL
+     * - password (string) — required, minimum length enforced
+     * - password_confirm (string) — required, must equal password
+     *
+     * Return value / response:
+     * - On successful registration: redirects to the login URL (with a success flag).
+     * - On validation or persistence error: renders the registration view with a
+     *   `message` describing the problem and an `old` array with the previously
+     *   entered username and email (passwords are never preserved).
+     *
+     * Security and implementation notes:
+     * - Passwords are hashed using `password_hash()` before storage; plaintext
+     *   passwords are never written to the database.
+     * - This implementation performs only basic validation. In production you
+     *   should add CSRF protection, stronger password rules, email verification,
+     *   and rate-limiting to protect against abuse.
+     * - Unique user checks use `User::findByUsernameOrEmail()`; database errors
+     *   are caught and surfaced as a friendly message.
+     * - User-supplied values are trimmed and sanitized when re-displaying the form.
+     *
+     * Errors / exceptions:
+     * - Database insertion errors are caught and returned as an error message in
+     *   the rendered view rather than propagating an uncaught exception.
+     *
+     * @param Request $request HTTP request containing registration form data
+     * @return Response Redirect on success or HTML view with error(s) on failure
      */
     public function register(Request $request): Response
     {

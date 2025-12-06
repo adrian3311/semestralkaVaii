@@ -1,0 +1,121 @@
+/*
+  inlined-styles.css
+
+  Purpose: extracted view-specific CSS that was previously inlined inside templates.
+  This file contains small component styles used on the site such as the hero
+  carousel (home page) and rating/star rendering (reviews list). The comments
+  below explain what each block does and which components rely on them.
+*/
+
+/* --------------------------------------------------------------------------
+   Carousel (used on the Home index view)
+   - .carousel: outer wrapper for the hero slider. Controls overflow and provides
+     a clipping context for slides.
+   - .carousel-track: flex container that holds slides and is translated to
+     reveal the active slide.
+   - .carousel-slide: single slide container sized to the viewport width.
+   - .carousel-slide img: slide image sizing using object-fit to preserve aspect
+     while filling the height.
+   - mobile media query: reduce slide image height on smaller screens.
+   -------------------------------------------------------------------------- */
+.carousel {
+    position: relative;
+    max-width: 100%;
+    overflow: hidden;
+    background: #000; /* fallback background while images load */
+    border-radius: 6px;
+}
+.carousel-track {
+    display: flex;
+    transition: transform 0.6s ease; /* smooth slide animation */
+    will-change: transform; /* hint to browser for better animation performance */
+}
+.carousel-slide {
+    min-width: 100%; /* each slide takes full carousel width */
+    box-sizing: border-box;
+    user-select: none; /* prevent accidental text selection while dragging */
+    position: relative;
+}
+.carousel-slide img {
+    display: block;
+    width: 100%;
+    height: 420px;       /* fixed visual height for the hero area */
+    object-fit: cover;   /* crop the image to fill the area without distortion */
+}
+@media (max-width: 768px) {
+    /* Reduce hero height on small screens for better vertical fit */
+    .carousel-slide img { height: 260px; }
+}
+
+/* --------------------------------------------------------------------------
+   Carousel navigation controls & indicators
+   - .carousel-nav: container for prev/next buttons positioned at center-left/right
+   - .carousel-nav button: styling for the prev/next buttons (semi-opaque circles)
+   - .carousel-dots: centered dots to indicate and jump to slides
+   - .carousel-dot: single dot style, .active makes it highlighted
+   - .carousel-caption: overlay text (title/description) shown on top of slide
+   -------------------------------------------------------------------------- */
+.carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none; /* allow only inner buttons to be interactive */
+}
+.carousel-nav button {
+    pointer-events: auto; /* re-enable pointer on the buttons */
+    background: rgba(0,0,0,0.45); /* translucent background for contrast */
+    border: none;
+    color: #fff;
+    padding: 8px 10px;
+    margin: 0 6px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.carousel-dots {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 12px;
+    display: flex;
+    gap: 8px;
+}
+.carousel-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    cursor: pointer; /* clickable element to navigate to a slide */
+}
+.carousel-dot.active { background: #fff; }
+.carousel-caption {
+    position: absolute;
+    left: 16px;
+    bottom: 60px;
+    color: #fff;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.25); /* subtle overlay to keep text readable */
+    padding: 10px 12px;
+    border-radius: 4px;
+    max-width: 60%;
+}
+
+/* --------------------------------------------------------------------------
+   Ratings (used in Review/index view)
+   - Styles for rendering stars (filled/unfilled) and small rating label.
+   - Uses utility classes .text-warning/.text-muted to color filled/unfilled stars.
+   -------------------------------------------------------------------------- */
+.rating .text-warning { color: #f5c518; } /* gold for filled stars */
+.rating .text-muted  { color: #c0c0c0; } /* light gray for empty stars */
+.rating .star { font-size: 1.1rem; margin-right: 2px; }
+.rating-label { margin-left: 8px; color: #6c757d; font-size: 0.95rem; }
+
+/* --------------------------------------------------------------------------
+   Small utility: ensure navbar-brand doesn't shrink the logo image
+   - Keeps the brand area vertically centered and prevents image scaling
+   -------------------------------------------------------------------------- */
+.navbar-brand { display: flex; align-items: center; }
+
+/* End of inlined-styles.css */

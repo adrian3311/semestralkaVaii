@@ -20,10 +20,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="<?= $link->asset('css/styl.css') ?>">
+    <link rel="stylesheet" href="<?= $link->asset('css/theme.css') . '?v=4' ?>">
     <script src="<?= $link->asset('js/script.js') ?>"></script>
 </head>
-<body>
+<body class="auth-bg">
 <div class="container-fluid mt-3">
     <div class="web-content">
         <?= $contentHTML ?>

@@ -1,109 +1,62 @@
 <?php
 
+/**
+ * Home page view
+ *
+ * Purpose:
+ * - Render the main landing page with a hero carousel, information about the cafe,
+ *   featured specialties, a map preview and a newsletter signup (demo client-side behavior).
+ *
+ * Available variables:
+ * - $link: \Framework\Support\LinkGenerator for building asset/route URLs
+ *
+ * Notes:
+ * - Carousel behavior is implemented in the small script below and styles are
+ *   kept in `public/css/inlined-styles.css`.
+ * - Newsletter and contact components are demo-only and use localStorage for persistence.
+ */
+
 /** @var \Framework\Support\LinkGenerator $link */
 ?>
 
 <div class="container-fluid">
-    <style>
-        /* Simple carousel styles */
-        .carousel {
-            position: relative;
-            max-width: 100%;
-            overflow: hidden;
-            background: #000;
-            border-radius: 6px;
-        }
-        .carousel-track {
-            display: flex;
-            transition: transform 0.6s ease;
-            will-change: transform;
-        }
-        .carousel-slide {
-            min-width: 100%;
-            box-sizing: border-box;
-            user-select: none;
-            position: relative;
-        }
-        .carousel-slide img {
-            display: block;
-            width: 100%;
-            height: 420px;
-            object-fit: cover;
-        }
-        @media (max-width: 768px) {
-            .carousel-slide img { height: 260px; }
-        }
-        .carousel-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            pointer-events: none;
-        }
-        .carousel-nav button {
-            pointer-events: auto;
-            background: rgba(0,0,0,0.45);
-            border: none;
-            color: #fff;
-            padding: 8px 10px;
-            margin: 0 6px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .carousel-dots {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            bottom: 12px;
-            display: flex;
-            gap: 8px;
-        }
-        .carousel-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.5);
-            cursor: pointer;
-        }
-        .carousel-dot.active { background: #fff; }
-        .carousel-caption {
-            position: absolute;
-            left: 16px;
-            bottom: 60px;
-            color: #fff;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.6);
-            background: rgba(0,0,0,0.25);
-            padding: 10px 12px;
-            border-radius: 4px;
-            max-width: 60%;
-        }
-    </style>
+    <!-- CAROUSEL SECTION
+         - Displays a set of large featured images with captions.
+         - Navigation buttons (prev/next) and dots allow manual control.
+         - The carousel automatically advances on a timer and pauses on hover.
+    -->
+
+    <!-- carousel styles moved to public/css/inlined-styles.css -->
 
     <div class="carousel" id="mainCarousel" aria-roledescription="carousel">
         <div class="carousel-track" data-index="0">
             <div class="carousel-slide">
-                <img src="/images/1764112669_474625_003fb671f68a473b8b5c3dbb6a874bfa_mv2.avif" alt="Slide 1">
+                <img src="/images/1764690793_the-cafe-area.jpg" alt="Slide 1">
                 <div class="carousel-caption"><strong>Welcome to Arch Cafe</strong><div>Enjoy our special coffee and cozy atmosphere.</div></div>
             </div>
             <div class="carousel-slide">
-                <img src="/images/1764112815_474625_003fb671f68a473b8b5c3dbb6a874bfa_mv2.avif" alt="Slide 2">
+                <img src="/images/1764691113_chocolate-cake.jpg" alt="Slide 2">
                 <div class="carousel-caption"><strong>Seasonal Specials</strong><div>Try our chef recommended dishes this week.</div></div>
             </div>
             <div class="carousel-slide">
-                <img src="/images/1764112900_Sn__mka_obrazovky_2025-02-09_155144.png" alt="Slide 3">
+                <img src="/images/1764690736_caption.jpg" alt="Slide 3">
                 <div class="carousel-caption"><strong>Events & Gatherings</strong><div>Book your table for private events.</div></div>
             </div>
         </div>
 
+        <!-- carousel navigation controls: previous / next -->
         <div class="carousel-nav" aria-hidden="false">
             <button class="prev" aria-label="Previous slide">‹</button>
             <button class="next" aria-label="Next slide">›</button>
         </div>
+        <!-- dots container: populated by JS to indicate slides and allow direct navigation -->
         <div class="carousel-dots" role="tablist" aria-label="Slide dots"></div>
     </div>
 
+    <!-- CAROUSEL SCRIPT
+         - Initializes the carousel, creates dot controls, and manages auto-advance timer.
+         - Pauses rotation on mouse enter and resumes on mouse leave.
+    -->
     <script>
         (function(){
             const carousel = document.getElementById('mainCarousel');
@@ -118,7 +71,7 @@
             const intervalMs = 4000;
             let timer = null;
 
-            // create dots
+            // create dots for each slide and attach click handlers
             slides.forEach((s, i)=>{
                 const d = document.createElement('button');
                 d.className = 'carousel-dot' + (i===0? ' active':'');
@@ -158,7 +111,10 @@
         })();
     </script>
 
-    <!-- About & Specialties section -->
+    <!-- About & Specialties section
+         - Left column: about text, opening hours, contact info
+         - Right column: specialties grid with images and short captions
+    -->
     <div class="container mt-5 mb-5">
         <div class="row g-4 align-items-start">
             <div class="col-12 col-lg-6">
@@ -166,10 +122,16 @@
                 <p>Arch Cafe is a cozy spot where good coffee meets great company. We roast our beans locally and prepare dishes from fresh, seasonal ingredients — perfect for work, meetups, or relaxed weekends.</p>
 
                 <h5 class="mt-3">Opening hours</h5>
-                <ul class="list-unstyled">
-                    <li>Mon–Fri: 8:00 – 20:00</li>
-                    <li>Saturday: 9:00 – 18:00</li>
-                    <li>Sunday: 9:00 – 16:00</li>
+
+                <!-- Compact list version to save vertical space (plain text entries, no spans) -->
+                <ul class="list-unstyled opening-hours-list mb-3" aria-label="Opening hours">
+                    <li>Sunday - <strong>Closed</strong></li>
+                    <li>Monday - <strong>Closed</strong></li>
+                    <li>Tuesday - <strong>9:30 AM - 3:30 PM</strong></li>
+                    <li>Wednesday - <strong>9:30 AM - 3:30 PM</strong></li>
+                    <li>Thursday - <strong>9:30 AM - 3:30 PM</strong></li>
+                    <li>Friday  -  <strong>Closed</strong></li>
+                    <li>Saturday - <strong>9:30 AM - 3:30 PM</strong></li>
                 </ul>
 
                 <h5 class="mt-3">Contact</h5>
@@ -181,13 +143,13 @@
                 <div class="d-flex justify-content-between align-items-start mb-2">
                     <h3 class="m-0">Our specialties</h3>
                     <?php try { $contactUrl = $link->url('home.contact'); } catch (\Throwable $_) { $contactUrl = '?c=home&a=contact'; } ?>
-                    <a href="<?= $contactUrl ?>" class="btn btn-primary btn-sm">Reserve a table</a>
+                    <a href="<?= $contactUrl ?>" class="btn btn-warning btn-sm">Reserve a table</a>
                 </div>
 
                 <div class="row g-3">
                     <div class="col-6">
                         <div class="card">
-                            <img loading="lazy" src="/images/1764112669_474625_003fb671f68a473b8b5c3dbb6a874bfa_mv2.avif" class="card-img-top" alt="Coffee" style="height:110px;object-fit:cover;">
+                            <img loading="lazy" src="/images/1765022995_capucino.jpg" class="card-img-top" alt="Coffee" style="height:110px;object-fit:cover;">
                             <div class="card-body p-2">
                                 <strong>Cappuccino</strong>
                                 <div class="text-muted small">Perfectly frothed milk & espresso</div>
@@ -196,7 +158,7 @@
                     </div>
                     <div class="col-6">
                         <div class="card">
-                            <img loading="lazy" src="/images/1764112815_474625_003fb671f68a473b8b5c3dbb6a874bfa_mv2.avif" class="card-img-top" alt="Dessert" style="height:110px;object-fit:cover;">
+                            <img loading="lazy" src="/images/1765022984_tiramisu.jpg" class="card-img-top" alt="Dessert" style="height:110px;object-fit:cover;">
                             <div class="card-body p-2">
                                 <strong>Tiramisu</strong>
                                 <div class="text-muted small">House-made, creamy layers</div>
@@ -205,7 +167,7 @@
                     </div>
                     <div class="col-6">
                         <div class="card">
-                            <img loading="lazy" src="/images/1764112900_Sn__mka_obrazovky_2025-02-09_155144.png" class="card-img-top" alt="Salad" style="height:110px;object-fit:cover;">
+                            <img loading="lazy" src="/images/1765023189_salad.jpg" class="card-img-top" alt="Salad" style="height:110px;object-fit:cover;">
                             <div class="card-body p-2">
                                 <strong>Seasonal Salad</strong>
                                 <div class="text-muted small">Fresh local produce</div>
@@ -246,7 +208,7 @@
                         <input id="newsletterEmail" name="email" type="email" class="form-control" placeholder="Your email" required>
                     </div>
                     <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">Subscribe</button>
+                        <button type="submit" class="btn btn-warning">Subscribe</button>
                         <button id="newsletterLater" type="button" class="btn btn-outline-secondary">Maybe later</button>
                     </div>
                 </form>

@@ -21,9 +21,12 @@ class HomeController extends BaseController
      * Authorizes controller actions based on the specified action name.
      *
      * In this implementation, all actions are authorized unconditionally.
+     * Override this method in subclasses to implement per-action authorization
+     * rules (for example, checking user roles or permissions).
      *
-     * @param string $action The action name to authorize.
-     * @return bool Returns true, allowing all actions.
+     * @param Request $request The current HTTP request instance (may carry user/session info).
+     * @param string $action The action name to authorize (e.g. "index", "contact").
+     * @return bool Returns true to allow the action, false to deny.
      */
     public function authorize(Request $request, string $action): bool
     {
@@ -33,8 +36,10 @@ class HomeController extends BaseController
     /**
      * Displays the default home page.
      *
-     * This action serves the main HTML view of the home page.
+     * Renders the main landing page of the application. This action typically
+     * returns a ViewResponse that the framework will render into HTML.
      *
+     * @param Request $request The current HTTP request.
      * @return Response The response object containing the rendered HTML for the home page.
      */
     public function index(Request $request): Response
@@ -45,9 +50,10 @@ class HomeController extends BaseController
     /**
      * Displays the contact page.
      *
-     * This action serves the HTML view for the contact page, which is accessible to all users without any
-     * authorization.
+     * Serves the contact information view. No authorization is required and the
+     * page is accessible to all visitors.
      *
+     * @param Request $request The current HTTP request.
      * @return Response The response object containing the rendered HTML for the contact page.
      */
     public function contact(Request $request): Response
@@ -55,6 +61,16 @@ class HomeController extends BaseController
         return $this->html();
     }
 
+    /**
+     * Displays the information page.
+     *
+     * This action renders a static information view. It accepts the Request
+     * instance for parity with other actions and to allow future extensions
+     * (e.g. reading query parameters).
+     *
+     * @param Request $request The current HTTP request.
+     * @return Response The response object containing the rendered HTML for the information page.
+     */
     public function information(Request $request): Response
     {
         return $this->html();

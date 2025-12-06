@@ -10,8 +10,29 @@ use Framework\Http\HttpException;
 use Framework\Http\Request;
 use Framework\Http\Responses\Response;
 
+/**
+ * Class ReviewController
+ *
+ * Handles listing and CRUD operations for reviews.
+ * Public pages (index) are viewable by anyone. Adding a review requires the
+ * user to be logged in. Editing and deleting are restricted to administrators
+ * or the original review author (owner).
+ */
 class ReviewController extends BaseController
 {
+    /**
+     * Authorization check for review actions.
+     *
+     * Rules:
+     * - 'add' requires an authenticated user.
+     * - 'edit' and 'delete' are allowed for admin (username == 'admin') or the
+     *   original author of the review.
+     * - all other actions are permitted.
+     *
+     * @param Request $request Current HTTP request (used to read query values).
+     * @param string $action Action name being authorized (e.g. 'add', 'edit').
+     * @return bool True if the current user may perform the action, false otherwise.
+     */
     public function authorize(Request $request, string $action): bool
     {
         // allow any logged-in user to add reviews; edit/delete remain admin-only or owner-only
@@ -51,6 +72,17 @@ class ReviewController extends BaseController
         return true;
     }
 
+    /**
+     * Display a list of reviews.
+     *
+     * This action fetches all reviews and renders the index view. It is
+     * accessible to anonymous users. Database errors are translated into a
+     * 500 HttpException so the framework can handle the response.
+     *
+     * @param Request $request The current HTTP request.
+     * @return Response HTML response rendering the reviews list.
+     * @throws HttpException On underlying database error.
+     */
     public function index(Request $request): Response
     {
         // allow anyone (including anonymous) to view the reviews list
@@ -61,10 +93,33 @@ class ReviewController extends BaseController
          }
      }
 
+    /**
+     * Render a simple menu view.
+     *
+     * This action renders the menu page and does not perform data changes.
+     *
+     * @param Request $request The current HTTP request.
+     * @return Response HTML response for the menu page.
+     */
     public function menu(Request $request): Response {
         return $this->html();
     }
 
+    /**
+     * Add a new review.
+     *
+     * GET: renders the add form.
+     * POST: validates and saves a new review. The method sets the username from
+     * the currently logged-in user and ensures rating is an integer if provided.
+     * On success the user is redirected to the review index.
+     *
+     * Security and behavior notes:
+     * - Only authenticated users may add reviews (redirects to login when not).
+     * - Server-side validation should be applied in the model (not shown here).
+     *
+     * @param Request $request The current HTTP request (GET or POST payload).
+     * @return Response Redirect on success or the add form view on GET/error.
+     */
     public function add(Request $request): Response
     {
         // require login
@@ -96,6 +151,18 @@ class ReviewController extends BaseController
         return $this->html(compact('review'));
     }
 
+    /**
+     * Edit an existing review.
+     *
+     * GET: renders the edit form for a given review id.
+     * POST: updates the review and persists changes.
+     *
+     * Permission: only admin or the review owner may edit.
+     *
+     * @param Request $request The current HTTP request (should contain 'id').
+     * @return Response Redirect on success or the edit form view.
+     * @throws HttpException If the review does not exist (404).
+     */
     public function edit(Request $request): Response
     {
         $id = (int)$request->value('id');
@@ -122,6 +189,20 @@ class ReviewController extends BaseController
         return $this->html(compact('review'));
     }
 
+    /**
+     * Delete a review (with confirmation flow).
+     *
+     * GET: shows a confirmation view for deletion.
+     * POST with 'confirm' value: attempts to delete the review record and
+     * redirects to the reviews list on success. Errors during deletion are
+     * logged and an error message is displayed.
+     *
+     * Permission: only admin or the review owner may delete.
+     *
+     * @param Request $request The current HTTP request (should contain 'id').
+     * @return Response Redirect on successful deletion or confirmation view.
+     * @throws HttpException If the review does not exist (404).
+     */
     public function delete(Request $request): Response
     {
         $id = (int)$request->value('id');
