@@ -7,6 +7,7 @@
 <!DOCTYPE html>
 <html lang="sk">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= App\Configuration::APP_NAME ?></title>
     <!-- Favicons (use public/images/logo.png) -->
     <?php $fav = $link->asset('images/logo.png') . '?v=1'; ?>
@@ -38,6 +39,9 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="<?= $link->url('menu.index') ?>">Menu</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="<?= $link->url('drink.index') ?>">Drinks</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="<?= $link->url('review.index') ?>">Reviews</a>

@@ -38,15 +38,36 @@ try {
 } catch (\Throwable $e) {
     $currentUser = null;
 }
+// ensure we have a sort variable (controller provides it when available)
+// $sort controls the ordering of reviews on the server side (handled by ReviewController::index):
+// - 'new' => newest first (ORDER BY `id` DESC)
+// - 'old' => oldest first  (ORDER BY `id` ASC)
+// The view receives $sort from the controller and the toggle button below flips between those values.
+$sort = $sort ?? 'new';
 ?>
 
 <div class="container mt-4">
     <!-- Header: Add review button (for logged-in users) and page title -->
     <div class="d-flex align-items-center mb-3">
         <?php if ($isLoggedIn): ?>
+            <!-- Add review: visible only for logged-in users; links to the add form -->
             <a href="<?= $link->url('review.add') ?>" class="btn btn-warning me-3">Add review</a>
         <?php endif; ?>
         <h2 class="m-0">Reviews</h2>
+        <!-- Sort toggle: align right -->
+        <div class="ms-auto">
+            <?php
+                // Determine target sort value: if current is 'old' then clicking should switch to 'new', and vice versa.
+                $toggleTo = ($sort === 'old') ? 'new' : 'old';
+                // Label shown on the button describes what will happen when clicked (i.e. the ordering that will be applied).
+                $label = ($toggleTo === 'old') ? 'Oldest first' : 'Newest first';
+                // Build URL with the new sort parameter. The fourth argument 'true' tells LinkGenerator to append current
+                // GET parameters so we don't lose other query values when toggling sort.
+                $sortUrl = $link->url(['sort' => $toggleTo], [], false, true);
+            ?>
+            <!-- Clicking this link reloads the page with ?sort=old or ?sort=new and the controller will return reviews in the requested order. -->
+            <a href="<?= $sortUrl ?>" class="btn btn-sm btn-outline-secondary">Sort: <?= htmlspecialchars($label) ?></a>
+        </div>
     </div>
 
     <?php if (!empty($message)): ?>
@@ -65,7 +86,7 @@ try {
                      <div class="d-flex w-100 justify-content-between">
                          <!-- Review author -->
                          <h5 class="mb-1"><?= htmlspecialchars($r->getUsername()) ?></h5>
-                         <!-- Sequential index / small id shown for reference -->
+                         <!-- Sequential index / small id shown for reference. $idx is 1-based loop counter used only for display. -->
                          <small class="text-muted">#<?= $idx ?></small>
                      </div>
 
@@ -74,17 +95,20 @@ try {
 
                      <!-- Bottom row: rating display on the left, controls on the right -->
                      <div class="mt-2 d-flex gap-2 justify-content-between align-items-center">
-                         <!-- Rating display: stars and numeric label or "(no rating)" -->
+                         <!-- Rating display: render up to 5 stars and a numeric label -->
                          <div class="rating d-flex align-items-center" aria-label="Rating">
                              <?php $rt = (int)($r->getRating() ?? 0); ?>
                              <?php for ($s=1;$s<=5;$s++): ?>
                                  <?php if ($s <= $rt): ?>
+                                     <!-- filled star for each point in rating -->
                                      <span class="text-warning star">★</span>
                                  <?php else: ?>
+                                     <!-- empty star for remaining -->
                                      <span class="text-muted star">☆</span>
                                  <?php endif; ?>
                              <?php endfor; ?>
                              <?php if ($rt > 0): ?>
+                                 <!-- Numeric representation like "4/5"; (no rating) if zero/null -->
                                  <span class="rating-label"><?= htmlspecialchars($rt . '/5') ?></span>
                              <?php else: ?>
                                  <span class="rating-label">(no rating)</span>
@@ -94,10 +118,13 @@ try {
                          <!-- Action buttons: Edit/Delete visible for admins or the review owner -->
                          <div class="d-flex gap-2 justify-content-end">
                          <?php
+                             // Permission check: allow modification if current user is admin or the original author
                              $canModify = $isAdmin || ($isLoggedIn && ($r->getUsername() === $currentUser));
                              if ($canModify):
                          ?>
+                             <!-- Edit link -> edit form for this review -->
                              <a class="btn btn-sm btn-outline-primary" href="<?= $link->url('review.edit', ['id' => $r->getId()]) ?>">Edit</a>
+                             <!-- Delete link -> confirmation page to delete review -->
                              <a class="btn btn-sm btn-outline-danger" href="<?= $link->url('review.delete', ['id' => $r->getId()]) ?>">Delete</a>
                          <?php endif; ?>
                          </div>

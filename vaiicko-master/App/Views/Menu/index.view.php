@@ -30,39 +30,36 @@ use App\Configuration;
 
 ?>
 
-<div class="container-fluid">
+<div class="container mt-4">
     <div class="row mb-4">
-        <div class="col">
+        <div class="col d-flex align-items-center">
             <?php if ($isAdmin): ?>
-                <!-- Admin-only: link to add a new menu item -->
+                <!-- Admin-only: link to add a new menu item (label restored to 'Add item') -->
                 <a href="<?= $link->url('menu.add') ?>" class="btn btn-warning">Add item</a>
             <?php endif; ?>
+            <!-- Title/text displayed to the right of the button (visible to everyone) -->
+            <h2 class="m-0 ms-3">Menu</h2>
         </div>
     </div>
 
     <!-- Render the menu items in a responsive grid -->
     <div class="row justify-content-center">
         <?php foreach ($menu as $item): ?>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex mb-4">
-                <!-- Single menu card: image, text and admin controls -->
-                <div class="border post d-flex flex-column w-100">
-                    <div>
-                        <!-- Item image (use htmlspecialchars to avoid XSS) -->
-                        <img src="<?= htmlspecialchars($item->getPicture()) ?>" class="img-fluid" alt="Menu image">
-                    </div>
-                    <div class="m-2">
-                        <!-- Item description/text -->
-                        <?= $item->getText() ?>
-                    </div>
-                    <div class="m-2 d-flex gap-2 justify-content-end align-items-center">
-                        <!-- Title is shown; spacer used previously to push buttons to right -->
-                        <span class="me-auto">Title: <?= htmlspecialchars($item->getTitle()) ?></span>
-
-                        <!-- Controls: visible only to logged-in admin users -->
-                        <?php if ($user->isLoggedIn() && $isAdmin): ?>
-                            <a class="btn btn-sm btn-outline-primary ms-2" href="<?= $link->url('menu.edit', ['id' => $item->getId()]) ?>">Edit</a>
-                            <a class="btn btn-sm btn-outline-danger ms-2" href="<?= $link->url('menu.delete', ['id' => $item->getId()]) ?>">Delete</a>
-                        <?php endif; ?>
+            <div id="menu-item-<?= $item->getId() ?>" class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex mb-4">
+                <!-- Single menu card using Bootstrap card with white background to match drinks -->
+                <div class="card h-100 w-100">
+                    <?php if (!empty($item->getPicture())): ?>
+                        <img src="<?= htmlspecialchars($item->getPicture()) ?>" class="card-img-top" alt="<?= htmlspecialchars($item->getTitle()) ?>">
+                    <?php endif; ?>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title"><?= htmlspecialchars($item->getTitle()) ?></h5>
+                        <p class="card-text"><?= nl2br(htmlspecialchars($item->getText())) ?></p>
+                        <div class="mt-auto d-flex gap-2 justify-content-end align-items-center">
+                            <?php if ($user->isLoggedIn() && $isAdmin): ?>
+                                <a class="btn btn-sm btn-outline-primary ms-2 ajax-edit" href="<?= $link->url('menu.edit', ['id' => $item->getId()]) ?>" data-id="<?= $item->getId() ?>">Edit</a>
+                                <a class="btn btn-sm btn-outline-danger ms-2 ajax-delete" href="<?= $link->url('menu.delete', ['id' => $item->getId()]) ?>" data-id="<?= $item->getId() ?>">Delete</a>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>

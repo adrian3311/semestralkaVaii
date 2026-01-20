@@ -87,7 +87,15 @@ class ReviewController extends BaseController
     {
         // allow anyone (including anonymous) to view the reviews list
         try {
-            return $this->html(['reviews' => Review::getAll()]);
+            // support sort parameter: 'new' (default) or 'old'
+            $sort = strtolower((string)($request->value('sort') ?? 'new'));
+            if ($sort === 'old') {
+                $orderBy = '`id` ASC'; // oldest first by primary key (insertion order)
+            } else {
+                $orderBy = '`id` DESC'; // newest first by primary key
+                $sort = 'new';
+            }
+            return $this->html(['reviews' => Review::getAll(null, [], $orderBy), 'sort' => $sort]);
          } catch (Exception $e) {
              throw new HttpException(500, 'DB Chyba: ' . $e->getMessage());
          }

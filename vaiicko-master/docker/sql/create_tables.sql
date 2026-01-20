@@ -75,4 +75,23 @@ CREATE TABLE `reviews` (
 -- `App/Models/Review` to include and use it. This script intentionally leaves the database empty of
 -- sample data so you can control initial content.
 
+-- New table: drinks (beverages offered by the cafe)
+-- Columns:
+--  - id: primary key
+--  - name: drink name
+--  - description: optional textual description
+--  - price: decimal price (currency), stored as DECIMAL(7,2)
+--  - picture: optional path to an image under public/
+--  - created_at: timestamp when the row was created
+DROP TABLE IF EXISTS `drinks`;
+
+CREATE TABLE `drinks` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `title` VARCHAR(255) NOT NULL,
+    `text` TEXT DEFAULT NULL,
+    `picture` VARCHAR(255) DEFAULT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- End of file
