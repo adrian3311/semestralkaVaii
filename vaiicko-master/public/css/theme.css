@@ -24,9 +24,9 @@
 :root {
   --navbar-bg: #6b4f3a; /* coffee brown */
   --page-bg: #f3e9dc;   /* beige page background */
-  --accent: #8B5E3C;
-  --accent-dark: #704a33;
-  --surface: #ffffff; /* panels/cards surface color */
+   /* --accent: #8B5E3C;*/
+    /*  --accent-dark: #704a33;
+    /*--surface: #ffffff; /* panels/cards surface color */
   --text: #222;
 }
 
@@ -45,7 +45,6 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
     margin-right: calc(50% - 50vw);
     background: #212529;
     color: #fff;
-    box-sizing: border-box;
     left: 0;
 }
 .container-fluid.mt-3 { flex: 1 0 auto; }
@@ -59,11 +58,8 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 .navbar-center {
     position: absolute;
     left: 50%;
-    transform: translateX(-50%);
     pointer-events: none;
     color: #ffffff;
-    font-weight: 500;
-    white-space: nowrap;
 }
 .site-footer a { color: #f8f9fa; text-decoration: none; }
 
@@ -132,5 +128,3 @@ html, body {
 .auth-bg {
     background-color: var(--page-bg) !important;
 }
-
-/* end of theme.css */

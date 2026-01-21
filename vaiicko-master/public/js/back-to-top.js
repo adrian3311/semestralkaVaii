@@ -21,9 +21,7 @@
         btn.style.border = 'none';
         btn.style.background = '#fd790d';
         btn.style.color = '#fff';
-        btn.style.boxShadow = '0 4px 10px rgba(0,0,0,0.15)';
         btn.style.cursor = 'pointer';
-        btn.style.transition = 'opacity 200ms ease, transform 200ms ease';
         btn.style.opacity = '0';
         btn.innerHTML = '↑';
 
@@ -39,9 +37,8 @@
         btn.style.display = 'flex';
         // force reflow to allow transition
         // eslint-disable-next-line no-unused-expressions
-        btn.offsetHeight;
         btn.style.opacity = '1';
-        btn.style.transform = 'translateY(0)';
+       // btn.style.transform = 'translateY(0)';
     }
 
     function hide(btn) {
@@ -66,7 +63,7 @@
             } catch (e) {
                 // ignore
             }
-        }, { passive: true });
+        }, { passive: true }); // passive for better scroll performance
 
         btn.addEventListener('click', function () {
             try {

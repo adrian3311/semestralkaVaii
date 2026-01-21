@@ -60,6 +60,7 @@ try {
     <?php if (!($isAdmin || ($isLoggedIn && ($review->getUsername() === $currentUser)))): ?>
         <div class="alert alert-warning">You do not have permission to edit this review.</div>
     <?php else: ?>
+
         <!-- Edit form: POST to the current route; controller handles saving -->
         <form method="post">
             <!-- Author name (plain text) -->
@@ -78,12 +79,10 @@ try {
             <div class="mb-3">
                 <label for="rating" class="form-label">Rating</label>
                 <select name="rating" id="rating" class="form-select">
-                    <option value="">(no rating)</option>
-                    <?php for ($i=1;$i<=5;$i++): $sel = ($review->getRating() ?? '') == $i ? 'selected' : ''; ?>
+                    <?php for ($i=0;$i<=5;$i++): $sel = ($review->getRating() ?? '') == $i ? 'selected' : ''; ?>
                         <option value="<?= $i ?>" <?= $sel ?>><?= str_repeat('★',$i) ?> <?= $i ?></option>
                     <?php endfor; ?>
                 </select>
-                <!-- Note: the JS below creates/updates the #rating-preview element if missing -->
             </div>
 
             <!-- Form actions -->
@@ -102,6 +101,7 @@ try {
     - Clicking a star sets the select value and updates the preview.
 -->
 <script>
+    /**
 document.addEventListener('DOMContentLoaded', function () {
     const select = document.getElementById('rating');
     // attempt to find a preview element; if missing, create it right after the select's wrapper
@@ -143,5 +143,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // initial render using select value or review rating
     render(select.value);
-});
+}); */
 </script>

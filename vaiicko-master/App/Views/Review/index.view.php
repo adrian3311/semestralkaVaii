@@ -75,6 +75,7 @@ $sort = $sort ?? 'new';
         <div class="alert alert-warning"><?= htmlspecialchars($message) ?></div>
         <p><a href="<?= \App\Configuration::LOGIN_URL ?>" class="btn btn-primary">Log in</a></p>
     <?php else: ?>
+
      <?php if (empty($reviews)): ?>
          <!-- Empty state when there are no reviews -->
          <div class="alert alert-info">No reviews yet.</div>

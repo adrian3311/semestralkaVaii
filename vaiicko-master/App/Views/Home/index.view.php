@@ -76,7 +76,7 @@
                 const d = document.createElement('button');
                 d.className = 'carousel-dot' + (i===0? ' active':'');
                 d.setAttribute('data-index', String(i));
-                d.setAttribute('aria-label', 'Go to slide ' + (i+1));
+                //d.setAttribute('aria-label', 'Go to slide ' + (i+1));
                 d.addEventListener('click', ()=> goTo(i));
                 dotsContainer.appendChild(d);
             });
@@ -213,7 +213,9 @@
                     </div>
                 </form>
                 <div id="newsletterMessage" style="display:none;" class="alert alert-success">Thanks — you've been subscribed (demo).</div>
+
                 <script>
+                    /**
                     (function(){
                         const form = document.getElementById('newsletterForm');
                         const emailInput = document.getElementById('newsletterEmail');
@@ -229,7 +231,7 @@
                             msg.style.display = 'block';
                             form.style.display = 'none';
                         });
-                    })();
+                    })(); */
                 </script>
             </div>
         </div>

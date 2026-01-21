@@ -161,10 +161,10 @@ class DrinkController extends BaseController
                 return $this->redirect($this->url('drink.index'));
             } catch (Exception $e) {
                 try {
-                    $logsDir = __DIR__ . '/../../App/logs/';
+                    /*$logsDir = __DIR__ . '/../../App/logs/';
                     if (!is_dir($logsDir)) { @mkdir($logsDir, 0755, true); }
                     $msg = '[' . date('Y-m-d H:i:s') . "] Failed to delete drink id={$drink->getId()} - " . $e->getMessage() . PHP_EOL . $e->getTraceAsString() . PHP_EOL;
-                    @file_put_contents($logsDir . 'delete_errors.log', $msg, FILE_APPEND | LOCK_EX);
+                    @file_put_contents($logsDir . 'delete_errors.log', $msg, FILE_APPEND | LOCK_EX);*/
                 } catch (\Throwable $ignore) {}
 
                 $message = 'Chyba pri mazani: ' . $e->getMessage();

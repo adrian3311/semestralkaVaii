@@ -75,7 +75,7 @@
 <footer class="site-footer py-2 mt-2">
     <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center" style="padding-top:6px;padding-bottom:6px;">
         <div style="font-size:0.95rem;">&copy; <?= date('Y') ?> <?= htmlspecialchars(App\Configuration::APP_NAME) ?> — All rights reserved.</div>
-        <div class="mt-2 mt-md-0" style="font-size:0.95rem;">
+        <div style="font-size:0.95rem;">
             <!-- Open external social links in a new tab and use rel for security -->
             <a href="https://www.facebook.com/p/Arch-Cafe-at-Kresen-Kernow-100091795280068" class="me-3" target="_blank" rel="noopener noreferrer">Facebook</a>
             <a href="https://www.instagram.com/michal.liba" class="me-3" target="_blank" rel="noopener noreferrer">Instagram</a>

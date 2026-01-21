@@ -38,7 +38,7 @@ $isLoggedIn = false; try { $isLoggedIn = $user->isLoggedIn(); } catch (\Throwabl
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title"><?= htmlspecialchars($d->getTitle()) ?></h5>
                             <?php if (!empty($d->getText())): ?>
-                                <p class="card-text"><?= nl2br(htmlspecialchars($d->getText())) ?></p>
+                                <p class="card-text"><?= nl2br(htmlspecialchars($d->getText())) ?></p> <!--nl2br: zmení každé nové riadky za <br>  -->
                             <?php endif; ?>
                             <div class="mt-auto d-flex justify-content-between align-items-center">
                                 <div class="price"></div>

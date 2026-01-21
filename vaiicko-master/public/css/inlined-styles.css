@@ -28,11 +28,9 @@
 .carousel-track {
     display: flex;
     transition: transform 0.6s ease; /* smooth slide animation */
-    will-change: transform; /* hint to browser for better animation performance */
 }
 .carousel-slide {
     min-width: 100%; /* each slide takes full carousel width */
-    box-sizing: border-box;
     user-select: none; /* prevent accidental text selection while dragging */
     position: relative;
 }
@@ -42,42 +40,24 @@
     height: 420px;       /* fixed visual height for the hero area */
     object-fit: cover;   /* crop the image to fill the area without distortion */
 }
-@media (max-width: 768px) {
-    /* Reduce hero height on small screens for better vertical fit */
-    .carousel-slide img { height: 260px; }
-}
-
-/* --------------------------------------------------------------------------
-   Carousel navigation controls & indicators
-   - .carousel-nav: container for prev/next buttons positioned at center-left/right
-   - .carousel-nav button: styling for the prev/next buttons (semi-opaque circles)
-   - .carousel-dots: centered dots to indicate and jump to slides
-   - .carousel-dot: single dot style, .active makes it highlighted
-   - .carousel-caption: overlay text (title/description) shown on top of slide
-   -------------------------------------------------------------------------- */
 .carousel-nav {
     position: absolute;
     top: 50%;
-    transform: translateY(-50%);
     width: 100%;
     display: flex;
     justify-content: space-between;
-    pointer-events: none; /* allow only inner buttons to be interactive */
 }
 .carousel-nav button {
-    pointer-events: auto; /* re-enable pointer on the buttons */
     background: rgba(0,0,0,0.45); /* translucent background for contrast */
     border: none;
     color: #fff;
     padding: 8px 10px;
     margin: 0 6px;
-    border-radius: 4px;
     cursor: pointer;
 }
 .carousel-dots {
     position: absolute;
     left: 50%;
-    transform: translateX(-50%);
     bottom: 12px;
     display: flex;
     gap: 8px;
@@ -85,7 +65,6 @@
 .carousel-dot {
     width: 10px;
     height: 10px;
-    border-radius: 50%;
     background: rgba(255,255,255,0.5);
     cursor: pointer; /* clickable element to navigate to a slide */
 }
@@ -95,11 +74,8 @@
     left: 16px;
     bottom: 60px;
     color: #fff;
-    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
     background: rgba(0,0,0,0.25); /* subtle overlay to keep text readable */
     padding: 10px 12px;
-    border-radius: 4px;
-    max-width: 60%;
 }
 
 /* --------------------------------------------------------------------------

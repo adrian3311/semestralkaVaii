@@ -83,6 +83,7 @@ $view->setLayout('auth');
 </div>
 
 <script>
+    /**
 document.addEventListener('DOMContentLoaded', function () {
     const pwd = document.getElementById('password');
     const pwd2 = document.getElementById('password_confirm');
@@ -106,5 +107,5 @@ document.addEventListener('DOMContentLoaded', function () {
         pwd.addEventListener('input', validate);
         pwd2.addEventListener('input', validate);
     }
-});
+}); */
 </script>

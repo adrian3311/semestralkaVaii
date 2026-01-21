@@ -32,7 +32,7 @@ use App\Configuration;
 
 <div class="container mt-4">
     <div class="row mb-4">
-        <div class="col d-flex align-items-center">
+        <div class="col d-flex align-items-left">
             <?php if ($isAdmin): ?>
                 <!-- Admin-only: link to add a new menu item (label restored to 'Add item') -->
                 <a href="<?= $link->url('menu.add') ?>" class="btn btn-warning">Add item</a>

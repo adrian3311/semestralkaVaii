@@ -122,7 +122,7 @@ class Review extends Model
             return;
         }
         $r = (int)$rating;
-        if ($r < 1) { $r = 1; }
+        if ($r < 1) { $r = 0; }
         if ($r > 5) { $r = 5; }
         $this->rating = $r;
     }

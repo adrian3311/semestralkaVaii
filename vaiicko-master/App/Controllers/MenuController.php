@@ -258,13 +258,13 @@ class MenuController extends BaseController {
             } catch (Exception $e) {
                 // Log exception to file for debugging
                 try {
-                    $logsDir = __DIR__ . '/../../App/logs/';
+                    /*$logsDir = __DIR__ . '/../../App/logs/';
                     if (!is_dir($logsDir)) {
                         @mkdir($logsDir, 0755, true);
                     }
                     $logFile = $logsDir . 'delete_errors.log';
                     $logMsg = '[' . date('Y-m-d H:i:s') . "] Failed to delete menu id={$menu->getId()} - " . get_class($e) . ": " . $e->getMessage() . PHP_EOL . $e->getTraceAsString() . PHP_EOL;
-                    @file_put_contents($logFile, $logMsg, FILE_APPEND | LOCK_EX);
+                    @file_put_contents($logFile, $logMsg, FILE_APPEND | LOCK_EX); */
                 } catch (\Throwable $ignore) {
                     // ignore logging errors
                 }

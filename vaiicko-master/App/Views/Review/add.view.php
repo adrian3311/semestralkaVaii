@@ -15,69 +15,32 @@
  * - $user: Framework\Auth\AppUser representing the current user
  * - $message: optional status or error message to display
  */
+/** @var \App\Models\Review $review */
+/** @var string|null $message */
+/** @var \Framework\Support\LinkGenerator $link */
+/** @var \Framework\Support\View $view */
+/** @var \Framework\Auth\AppUser $user */
 
-use Framework\Auth\AppUser;
-use Framework\Support\LinkGenerator;
-use Framework\Support\View as ViewHelper;
+// Use the main site layout
+$view->setLayout('root');
 
-// Ensure helper variables exist for static analysis and safe runtime fallback
-if (!isset($view)) {
-    if (class_exists(ViewHelper::class)) {
-        // Try to create a real View helper if available
-        try {
-            $layoutSlot = null;
-            $view = new ViewHelper($layoutSlot);
-        } catch (\Throwable $e) {
-            $view = new class { public function setLayout($name) { /* no-op fallback */ } };
-        }
-    } else {
-        $view = new class { public function setLayout($name) { /* no-op fallback */ } };
-    }
-}
+// Ensure $user exists (framework provides it at runtime); create a safe fallback to avoid template errors
+if (!isset($user)) { $user = new \Framework\Auth\AppUser(); }
 
-if (!isset($link)) {
-    if (class_exists(LinkGenerator::class)) {
-        // Can't reliably construct LinkGenerator without App/Router in this template; use a small shim that delegates to url building if needed
-        $link = new class {
-            public function url($name, $params = []) { return '?c=review&a=index'; }
-        };
-    } else {
-        $link = new class { public function url($name, $params = []) { return '?c=review&a=index'; } };
-    }
-}
-
-if (!isset($review)) {
-    $review = null; // null-safe usage in template (we use null-safe operator)
-}
-
-// Ensure $user is available for the view (runtime provides it)
-if (!isset($user)) {
-    if (class_exists(AppUser::class)) {
-        try {
-            $user = new AppUser();
-        } catch (\Throwable $e) {
-            $user = new class { public function isLoggedIn(){return false;} public function getUsername(){return null;} public function getName(){return null;} };
-        }
-    } else {
-        $user = new class { public function isLoggedIn(){return false;} public function getUsername(){return null;} public function getName(){return null;} };
-    }
-}
-
-$isAdmin = false;
-try { $isAdmin = $user->isLoggedIn() && ($user->getUsername() === 'admin'); } catch (\Throwable $e) { $isAdmin = false; }
+// Compute permission flags
+$isAdmin = false; try { $isAdmin = $user->isLoggedIn() && ($user->getUsername() === 'admin'); } catch (\Throwable $e) { $isAdmin = false; }
 $isLoggedIn = false; try { $isLoggedIn = $user->isLoggedIn(); } catch (\Throwable $e) { $isLoggedIn = false; }
 
-$displayName = null;
+// Compute the current user's display name safely for owner checks
+$currentUser = null;
 try {
-    $displayName = $user->getName();
-    if ($displayName === null && $user->isLoggedIn()) {
-        $displayName = $user->getUsername();
+    $currentUser = $user->getName();
+    if ($currentUser === null && $user->isLoggedIn()) {
+        $currentUser = $user->getUsername();
     }
 } catch (\Throwable $e) {
-    $displayName = null;
+    $currentUser = null;
 }
-
-$view->setLayout('root');
 ?>
 
 <div class="container mt-4">
@@ -98,7 +61,7 @@ $view->setLayout('root');
             <!-- Display the current user's name as plain text -->
             <div class="mb-3">
                 <label class="form-label">Name</label>
-                <div class="form-control-plaintext"><?= htmlspecialchars($displayName ?? '') ?></div>
+                <div class="form-control-plaintext"><?= htmlspecialchars($user->getName()) ?></div>
             </div>
 
             <!-- Text area for the review body -->
@@ -111,17 +74,10 @@ $view->setLayout('root');
             <div class="mb-3">
                 <label for="rating" class="form-label">Rating</label>
                 <select name="rating" id="rating" class="form-select" aria-label="Rating">
-                    <option value="">(no rating)</option>
-                    <?php for ($i=1;$i<=5;$i++): $sel = ($review?->getRating() ?? '') == $i ? 'selected' : ''; ?>
+                    <?php for ($i=0;$i<=5;$i++): $sel = ($review?->getRating() ?? '') == $i ? 'selected' : ''; ?>
                         <option value="<?= $i ?>" <?= $sel ?>><?= str_repeat('★',$i) ?> <?= $i ?></option>
                     <?php endfor; ?>
                 </select>
-            </div>
-
-            <!-- Live rating preview: shows stars and allows clicking to set the rating -->
-            <div class="mb-3">
-                <label class="form-label">Rating preview</label>
-                <div id="rating-preview" class="fs-4"><?php $rt = $review?->getRating() ?? 0; for ($s=1;$s<=5;$s++): echo $s <= $rt ? '<span class="text-warning">★</span>' : '<span class="text-muted">☆</span>'; endfor; ?></div>
             </div>
 
             <!-- Action buttons: Save and Cancel -->
@@ -140,36 +96,39 @@ $view->setLayout('root');
     - Keeps the UI in sync with the select element
 -->
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const select = document.getElementById('rating');
-    const preview = document.getElementById('rating-preview');
-    if (!select || !preview) return;
+    /**
+    document.addEventListener('DOMContentLoaded', function () {
+        const select = document.getElementById('rating');
+        const preview = document.getElementById('rating-preview');
+        if (!select || !preview) return;
 
-    function render(n) {
-        n = parseInt(n) || 0;
-        preview.innerHTML = '';
-        for (let i = 1; i <= 5; i++) {
-            const span = document.createElement('span');
-            span.className = (i <= n) ? 'text-warning star' : 'text-muted star';
-            span.style.cursor = 'pointer';
-            span.textContent = (i <= n) ? '★' : '☆';
-            span.dataset.value = i;
-            preview.appendChild(span);
+        function render(n) {
+            n = parseInt(n) || 0;
+            preview.innerHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                const span = document.createElement('span');
+                span.className = (i <= n) ? 'text-warning star' : 'text-muted star';
+                span.style.cursor = 'pointer';
+                span.textContent = (i <= n) ? '★' : '☆';
+                span.dataset.value = i;
+                preview.appendChild(span);
+            }
         }
-    }
 
-    // Clicking a star sets the select value and re-renders
-    preview.addEventListener('click', function (e) {
-        const t = e.target;
-        if (!t || !t.classList.contains('star')) return;
-        const v = t.dataset.value;
-        select.value = v;
-        render(v);
+        // Clicking a star sets the select value and re-renders
+        preview.addEventListener('click', function (e) {
+            const t = e.target;
+            if (!t || !t.classList.contains('star')) return;
+            const v = t.dataset.value;
+            select.value = v;
+            render(v);
+        });
+
+        select.addEventListener('change', function (e) { render(e.target.value); });
+
+        // initial render
+        render(select.value);
     });
-
-    select.addEventListener('change', function (e) { render(e.target.value); });
-
-    // initial render
-    render(select.value);
-});
+     */
 </script>
+

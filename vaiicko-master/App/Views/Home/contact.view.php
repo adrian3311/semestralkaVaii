@@ -113,6 +113,7 @@
                             </form>
 
                             <script>
+                                /**
                                 (function(){
                                     // Contact form client-side handler (demo only)
                                     // - Validates fields on submit
@@ -135,6 +136,7 @@
                                         setTimeout(()=> status.style.display = 'none', 4000);
                                     });
                                 })();
+                                 */
                             </script>
                         </div>
                     </div>
@@ -145,7 +147,7 @@
     </div>
 
     <!-- Page footer note: inviting text -->
-    <div class="row mt-4">
+    <div class="row mt-4 ">
         <div class="col text-center text-muted small">
             <em>Visit us for great coffee and friendly service — we look forward to welcoming you.</em>
         </div>
