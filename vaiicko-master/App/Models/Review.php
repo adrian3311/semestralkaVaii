@@ -22,7 +22,8 @@ use Framework\Core\Model;
 class Review extends Model
 {
     protected ?int $id = null;
-    protected string $username = '';
+    // store reference to user by id (foreign key to users.id)
+    protected ?int $user_id = null;
     protected ?string $text = null;
     // 1..5 star rating
     protected ?int $rating = 1;
@@ -52,24 +53,23 @@ class Review extends Model
     }
 
     /**
-     * Return the username of the author of this review.
+     * Get linked user id.
      *
-     * @return string The username (never null)
+     * @return int|null
      */
-    public function getUsername(): string
+    public function getUserId(): ?int
     {
-        return $this->username;
+        return $this->user_id;
     }
 
     /**
-     * Set the username for this review.
+     * Set linked user id (foreign key to users.id)
      *
-     * @param string $username Username of the review author
-     * @return void
+     * @param int|null $uid
      */
-    public function setUsername(string $username): void
+    public function setUserId(?int $uid): void
     {
-        $this->username = $username;
+        $this->user_id = $uid;
     }
 
     /**
@@ -85,14 +85,38 @@ class Review extends Model
     /**
      * Set the review text/content.
      *
-     * Note: The view layer is responsible for escaping output to avoid XSS.
-     *
      * @param string|null $text
      * @return void
      */
     public function setText(?string $text): void
     {
         $this->text = $text;
+    }
+
+    /**
+     * Convenience: fetch related User model when needed (lazy lookup).
+     * Returns null if user not found.
+     *
+     * @return User|null
+     */
+    public function getUser(): ?\App\Models\User
+    {
+        if ($this->user_id === null) return null;
+        try {
+            return \App\Models\User::getOne($this->user_id);
+        } catch (\Throwable $e) { return null; }
+    }
+
+    /**
+     * Backwards-compatible: return the username/display name of the author.
+     * If user_id is set, returns the related user's name; otherwise returns empty string.
+     *
+     * @return string
+     */
+    public function getUsername(): string
+    {
+        $u = $this->getUser();
+        return $u ? $u->getName() : '';
     }
 
     /**

@@ -57,7 +57,7 @@ try {
         <div class="alert alert-warning">You must be logged in to add a review.</div>
     <?php else: ?>
         <!-- Review form: POST to current route (controller handles saving) -->
-        <form method="post">
+        <form method="post" action="<?= $link->url('review.add') ?>" id="review-add-form">
             <!-- Display the current user's name as plain text -->
             <div class="mb-3">
                 <label class="form-label">Name</label>
@@ -131,4 +131,3 @@ try {
     });
      */
 </script>
-

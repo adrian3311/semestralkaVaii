@@ -90,7 +90,7 @@
                             <p class="text-muted">Use the form below and we'll get back to you within 24 hours.</p>
 
                             <!-- The form is client-side only for demo: in production submit to server -->
-                            <form id="contactForm" novalidate>
+                            <form id="contact-form" action="<?= $link->url('contact.send') ?>" method="post" novalidate>
                                 <div class="row g-2">
                                     <div class="col-12 col-md-6">
                                         <label class="form-label" for="name">Your name</label>
@@ -106,47 +106,57 @@
                                     </div>
                                 </div>
 
-                                <div class="mt-3 d-flex align-items-center">
-                                    <button type="submit" class="btn btn-warning me-3">Send message</button>
-                                    <div id="contactStatus" class="text-success small" style="display:none;">Message saved (demo)</div>
+                                <div class="mt-3 d-flex">
+                                    <button id="contact-send-btn" type="button" class="btn btn-warning me-3">Send message</button>
+                                    <div id="contactStatus" class="text-success small" style="display:none; margin-left:8px;">Message saved (demo)</div>
                                 </div>
-                            </form>
+                                <script>
+                                    (function(){
+                                        const form = document.getElementById('contact-form');
+                                        const btn = document.getElementById('contact-send-btn');
+                                        if (!form || !btn) return;
 
-                            <script>
-                                /**
-                                (function(){
-                                    // Contact form client-side handler (demo only)
-                                    // - Validates fields on submit
-                                    // - Stores messages in localStorage as a demo persistence layer
-                                    // - Shows a temporary success notice
-                                    const form = document.getElementById('contactForm');
-                                    const status = document.getElementById('contactStatus');
-                                    form.addEventListener('submit', function(e){
-                                        e.preventDefault();
-                                        // simple client-side validation
-                                        const name = document.getElementById('name').value.trim();
-                                        const email = document.getElementById('email').value.trim();
-                                        const message = document.getElementById('message').value.trim();
-                                        if (!name || !email || !message) { alert('Please fill in all fields'); return; }
-                                        if (!/.+@.+\..+/.test(email)) { alert('Please enter a valid email'); return; }
-                                        // demo behaviour: store message in localStorage and show success
-                                        try { const messages = JSON.parse(localStorage.getItem('contact_messages')||'[]'); messages.unshift({name, email, message, date:(new Date()).toISOString()}); localStorage.setItem('contact_messages', JSON.stringify(messages)); } catch (err) {}
-                                        form.reset();
-                                        status.style.display = 'inline-block';
-                                        setTimeout(()=> status.style.display = 'none', 4000);
-                                    });
-                                })();
-                                 */
-                            </script>
-                        </div>
-                    </div>
-                </div>
+                                        async function sendContact(){
+                                            btn.disabled = true;
+                                            try {
+                                                const res = await fetch(form.action || '/index.php?c=contact&a=send', {
+                                                    method: 'POST',
+                                                    body: new FormData(form),
+                                                    credentials: 'same-origin',
+                                                    headers: { 'X-Requested-With':'XMLHttpRequest', 'Accept':'application/json' }
+                                                });
+                                                if (!res.ok) { alert('Odoslanie zlyhalo'); return; }
+                                                let json;
+                                                try { json = await res.json(); } catch (e) { json = { ok: true }; }
+                                                const st = document.getElementById('contactStatus');
+                                                if (st) {
+                                                    st.textContent = json.message || (json.ok ? 'Odoslané' : 'Chyba');
+                                                    st.style.display = 'inline-block';
+                                                    setTimeout(()=> st.style.display = 'none', 3000);
+                                                }
+                                                if (json.ok) form.reset();
+                                            } catch (err) {
+                                                console.error('sendContact error', err);
+                                                alert('Chyba pri odoslaní');
+                                            } finally {
+                                                btn.disabled = false;
+                                            }
+                                        }
 
-            </div>
-        </div>
-    </div>
+                                        btn.addEventListener('click', sendContact);
+                                        form.addEventListener('submit', function(e){ e.preventDefault(); sendContact(); });
+                                    })();
+                                </script>
+                             </form>
+                         </div>
+                     </div>
+                 </div>
 
-    <!-- Page footer note: inviting text -->
+             </div>
+         </div>
+     </div>
+
+     <!-- Page footer note: inviting text -->
     <div class="row mt-4 ">
         <div class="col text-center text-muted small">
             <em>Visit us for great coffee and friendly service — we look forward to welcoming you.</em>

@@ -63,17 +63,16 @@ DROP TABLE IF EXISTS `reviews`;
 
 CREATE TABLE `reviews` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `username` VARCHAR(255) NOT NULL,
+  `user_id` INT(11) NOT NULL,
   `text` TEXT DEFAULT NULL,
   `rating` TINYINT UNSIGNED DEFAULT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_reviews_user_id` (`user_id`),
+  CONSTRAINT `fk_reviews_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Note: "username" stores the display name of the author at the time of posting. For a more robust
--- implementation consider adding a `user_id` FK column referencing `users(id)` and update the
--- `App/Models/Review` to include and use it. This script intentionally leaves the database empty of
--- sample data so you can control initial content.
+-- Note: `user_id` references `users(id)`. Existing data that used `username` will need migration.
 
 -- New table: drinks (beverages offered by the cafe)
 -- Columns:

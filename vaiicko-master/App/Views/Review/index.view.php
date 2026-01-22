@@ -81,9 +81,9 @@ $sort = $sort ?? 'new';
          <div class="alert alert-info">No reviews yet.</div>
      <?php else: ?>
          <!-- Reviews list: each review is rendered as a list-group item -->
-         <div class="list-group">
-             <?php $idx = 0; foreach ($reviews as $r): $idx++; ?>
-                 <div class="list-group-item">
+         <div class="list-group" id="reviews-list">
+            <?php $idx = 0; foreach ($reviews as $r): $idx++; ?>
+                <div class="list-group-item" id="review-item-<?= $r->getId() ?>">
                      <div class="d-flex w-100 justify-content-between">
                          <!-- Review author -->
                          <h5 class="mb-1"><?= htmlspecialchars($r->getUsername()) ?></h5>
@@ -125,8 +125,8 @@ $sort = $sort ?? 'new';
                          ?>
                              <!-- Edit link -> edit form for this review -->
                              <a class="btn btn-sm btn-outline-primary" href="<?= $link->url('review.edit', ['id' => $r->getId()]) ?>">Edit</a>
-                             <!-- Delete link -> confirmation page to delete review -->
-                             <a class="btn btn-sm btn-outline-danger" href="<?= $link->url('review.delete', ['id' => $r->getId()]) ?>">Delete</a>
+                             <!-- Delete link -> confirmation page to delete review (AJAX) -->
+                             <a class="btn btn-sm btn-outline-danger ajax-delete" data-id="<?= $r->getId() ?>" href="<?= $link->url('review.delete', ['id' => $r->getId()]) ?>">Delete</a>
                          <?php endif; ?>
                          </div>
                      </div>

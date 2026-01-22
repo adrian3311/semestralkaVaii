@@ -62,9 +62,9 @@ class ReviewController extends BaseController
                 if ($review === null) {
                     return false;
                 }
-                $owner = $review->getUsername();
-                $current = $this->user->getName() ?? $this->user->getUsername();
-                return $current !== null && $owner === $current;
+                $ownerId = $review->getUserId();
+                try { $currentId = $this->user->getId(); } catch (\Throwable $e) { $currentId = null; }
+                return $currentId !== null && $ownerId === $currentId;
             } catch (\Throwable $e) {
                 return false;
             }
@@ -145,9 +145,12 @@ class ReviewController extends BaseController
                 if ($ratingVal !== null) {
                     $review->setRating((int)$ratingVal);
                 }
-                // set username from logged-in user
-                $review->setUsername($this->user->getName());
+                // set user_id from logged-in user
+                try { $review->setUserId($this->user->getId()); } catch (\Throwable $e) { /* fallback: attempt to set null */ }
                 $review->save();
+
+                // If request is AJAX, return partial HTML for the new item so the client can insert it
+
                  return $this->redirect($this->url('review.index'));
              } catch (Exception $e) {
                 $message = 'Chyba pri ukladaní: ' . $e->getMessage();
@@ -224,12 +227,8 @@ class ReviewController extends BaseController
                 $review->delete();
                 return $this->redirect($this->url('review.index'));
             } catch (Exception $e) {
-                try {
-                    /*$logsDir = __DIR__ . '/../../App/logs/';
-                    if (!is_dir($logsDir)) { @mkdir($logsDir, 0755, true); }
-                    $msg = '[' . date('Y-m-d H:i:s') . "] Failed to delete review id={$review->getId()} - " . $e->getMessage() . PHP_EOL . $e->getTraceAsString() . PHP_EOL;
-                    @file_put_contents($logsDir . 'delete_errors.log', $msg, FILE_APPEND | LOCK_EX);*/
-                } catch (\Throwable $ignore) {}
+                // logging was intentionally removed; keep a note for future debugging
+                // (previous implementation logged details to App/logs/delete_errors.log)
 
                 $message = 'Chyba pri mazani: ' . $e->getMessage();
                 return $this->html(compact('review', 'message'));
